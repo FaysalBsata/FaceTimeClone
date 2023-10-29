@@ -1,37 +1,30 @@
 import { StatusBar } from 'expo-status-bar';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, Text } from 'react-native';
 import {
   CallContent,
   StreamCall,
   StreamVideo,
-  StreamVideoClient,
-  User,
+  useStreamVideoClient,
 } from '@stream-io/video-react-native-sdk';
 import { useEffect, useState } from 'react';
 import { View } from '../components/Themed';
-const apiKey = 'p9r9w99trd5s';
-const userId = 'faysal';
-const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZmF5c2FsIn0.SpxZmxEl-hPK594FJZhBEqyaEKtMcqHy6z8gfK5Q778';
 const callId = 'testCall';
-const user: User = { id: userId };
 export default function CallScreen() {
-  const [client] = useState(
-    () => new StreamVideoClient({ apiKey, user, token })
-  );
-  const [call] = useState(() => client.call('default', callId));
+  const client = useStreamVideoClient();
+  const [call] = useState(() => client?.call('default', callId));
 
   useEffect(() => {
-    call.join({ create: true });
+    call?.join({ create: true });
   }, [call]);
+  if (!call) {
+    return <Text>Call Not Found!</Text>;
+  }
 
   return (
     <View style={styles.container}>
-      <StreamVideo client={client}>
-        <StreamCall call={call}>
-          <CallContent />
-        </StreamCall>
-      </StreamVideo>
+      <StreamCall call={call}>
+        <CallContent />
+      </StreamCall>
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </View>
   );
