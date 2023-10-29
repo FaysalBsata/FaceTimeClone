@@ -1,29 +1,39 @@
 import { StatusBar } from 'expo-status-bar';
-import { Platform, StyleSheet, Text } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, Text } from 'react-native';
 import {
   CallContent,
+  CallTopView,
   StreamCall,
   StreamVideo,
+  useCalls,
   useStreamVideoClient,
 } from '@stream-io/video-react-native-sdk';
 import { useEffect, useState } from 'react';
-import { View } from '../components/Themed';
+import { View } from '../../components/Themed';
+import { router } from 'expo-router';
 const callId = 'testCall';
 export default function CallScreen() {
   const client = useStreamVideoClient();
-  const [call] = useState(() => client?.call('default', callId));
+  const calls = useCalls();
+  const call = calls[0];
+  // const [call] = useState(() => client?.call('default', callId));
 
-  useEffect(() => {
-    call?.join({ create: true });
-  }, [call]);
+  // useEffect(() => {
+  //   call?.join({ create: true });
+  // }, [call]);
+  // if (!call) {
+  //   return <Text>Call Not Found!</Text>;
+  // }
   if (!call) {
-    return <Text>Call Not Found!</Text>;
+    return <ActivityIndicator />;
   }
-
   return (
     <View style={styles.container}>
       <StreamCall call={call}>
-        <CallContent />
+        <CallContent
+          CallTopView={() => <CallTopView title={`ID: ${call.id}`} />}
+          onHangupCallHandler={() => router.back()}
+        />
       </StreamCall>
       <StatusBar style={Platform.OS === 'ios' ? 'light' : 'auto'} />
     </View>
