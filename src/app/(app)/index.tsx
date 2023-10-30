@@ -1,7 +1,8 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Button } from 'react-native';
 import React from 'react';
 import { Stack, router } from 'expo-router';
 import { useStreamVideoClient } from '@stream-io/video-react-native-sdk';
+import { supabase } from '../../lib/supabase';
 function genRandomString(length: number) {
   const chars =
     'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0987654321';
@@ -32,6 +33,7 @@ const HomeScreen = () => {
           <Text>Join Call</Text>
         </Pressable>
       </View>
+      <Button title="Sign Out" onPress={() => supabase.auth.signOut()} />
     </View>
   );
 };
